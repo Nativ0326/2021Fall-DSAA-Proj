@@ -1,0 +1,347 @@
+
+<!-- saved from url=(0065)https://introcs.cs.princeton.edu/java/assignments/barnes-hut.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>COS 126 Programming Assignment: Barnes-Hut Galaxy Simulator</title>
+<script type="text/javascript" src="./COS 126 Programming Assignment_ Barnes-Hut Galaxy Simulator_files/swfobject.js.下载"></script>
+</head>
+<body bgcolor="#FFFFFF" data-new-gr-c-s-check-loaded="14.1001.0" data-gr-ext-installed="">
+<table width="100%" border="0">
+<tbody><tr align="LEFT" valign="BOTTOM">
+<td><strong>COS 126</strong><br><br>
+<strong><font size="+2">N-Body Simulation</font></strong></td>
+<td align="RIGHT" valign="BOTTOM">
+<strong>Programming Assignment</strong><br><br>
+</td></tr></tbody></table>
+<hr>
+<p>
+
+
+
+</p><p>
+In the <a href="https://introcs.cs.princeton.edu/java/assignments/nbody.html">N-body assignment</a>, you created a brute force
+program to simulate the motion of N bodies, mutually affected by gravitational
+forces. In this brute force solution, the number of force calculations per step
+is proportional to N<sup>2</sup>. The brute force algorithm is not practical
+when N is large. In this assignment, you will implement the Barnes-Hut algorithm
+to simulate each step in time proportional to N log N and animate the
+evolution of entire galaxies.
+The Barnes-Hut algorithm is the algorithm most scientists use for
+N-Body simulation.
+
+</p><p><b>The Barnes-Hut algorithm.</b>
+The crucial idea in speeding up the brute force algorithm is to group nearby
+bodies and approximate them as a single body. If the group is sufficiently
+far away, we can approximate its gravitational effects by using its
+<em>center of mass</em>. The center of mass of a group of bodies is the
+average position of a body in that group, weighted by mass.
+Formally, if two bodies have positions
+<i>(x<sub>1</sub> , y<sub>1</sub>)</i> and <i>(x<sub>2</sub>, y<sub>2</sub>)</i>,
+and masses <i>m<sub>1</sub></i> and <i>m<sub>2</sub></i>, then their
+total mass and center of mass (<em>x</em>, <em>y</em>) are given by:
+
+</p><p></p><blockquote>
+<i>m = m<sub>1</sub> + m<sub>2</sub></i><br>
+<i>x = (x<sub>1</sub>m<sub>1</sub> + x<sub>2</sub>m<sub>2</sub>) / m</i><br>
+<i>y = (y<sub>1</sub>m<sub>1</sub> + y<sub>2</sub>m<sub>2</sub>) / m</i>
+</blockquote>
+
+The <em>Barnes-Hut algorithm</em> is a clever scheme for grouping together
+bodies that are sufficiently nearby.
+It recursively divides the set of bodies into groups by
+storing them in a <em>quad-tree</em>. 
+A quad-tree is similar to a binary tree, except that each node has 4 children
+(some of which may be empty).
+Each node represents a region of the two dimensional space.
+The topmost node represents
+the whole space, and its four children represent the four quadrants of the space.  As
+shown in the diagram, the space is recursively subdivided into quadrants until each
+subdivision contains 0 or 1 bodies (some regions do not have bodies in all of their
+quadrants.  Hence, some internal nodes have less than 4 non-empty children).
+Each external node represents a single body.
+Each internal node represents the group of bodies beneath it, and
+stores the center-of-mass and the total mass of all its children bodies.
+Here is an
+<a href="ftp://ftp.cs.princeton.edu/pub/cs126/barnes-hut/test1.txt">example</a>
+with 8 bodies.
+
+
+
+<p>
+</p><center>
+<img src="./COS 126 Programming Assignment_ Barnes-Hut Galaxy Simulator_files/example.gif">
+</center>
+
+
+<p>
+To calculate the net force on a particular body, traverse the nodes of the tree,
+starting from the root.
+If the center-of-mass of an internal node is sufficiently far
+from the body, approximate the bodies contained in that part of the tree
+as a single body, whose position is the group's center of mass and whose mass
+is the group's total mass.
+The algorithm is fast because we don't need to individually examine any of
+the bodies in the group.
+If the internal node is not sufficiently far from the body, recursively
+traverse each of its subtrees.
+To determine if a node is sufficiently far away, compute the quotient
+<em>s / d</em>, where <em>s</em> is the width of the region represented
+by the internal node, and <em>d</em> is the distance between the
+body and the node's center-of-mass.  Then, compare this ratio 
+against a threshold value θ.
+If <em> s / d</em> &lt; θ,
+then the internal node is sufficiently far away. By adjusting the θ
+parameter, we can balance the speed and accuracy of the simulation.
+We will always use θ = 0.5, a value commonly used in practice.
+Note that if θ = 0, then no internal node is treated as a single body,
+and the algorithm degenerates to brute force.
+
+
+
+</p><p><b>Constructing the Barnes-Hut tree.</b>
+To construct the Barnes-Hut tree, insert the bodies one after another.
+To insert a body <em>b</em> into the tree rooted at node <em>x</em>,
+use the following recursive procedure:
+
+</p><ol>
+
+<li>
+If node <em>x</em> does not contain a body, put the new body
+<em>b</em> here.
+
+</li><li>
+If node <em>x</em> is an internal node, update the center-of-mass and
+total mass of <em>x</em>.
+Recursively insert the body <em>b</em> in the appropriate quadrant.
+
+</li><li>  
+If node <em>x</em> is an external node, say containing a body named <em>c</em>,
+then you now have bodies <em>b</em> and <em>c</em> in the same region.
+Subdivide the region further by creating four children. 
+Then, recursively insert both
+<em>b</em> and <em>c</em> into the appropriate quadrant(s).
+Since <em>b</em> and <em>c</em> may still end up in the same quadrant,
+there may be several subdivisions during a single insertion.
+Finally, update the center-of-mass and total mass of <em>x</em>.
+</li></ol>
+
+<p>As an <a href="ftp://ftp.cs.princeton.edu/pub/cs126/barnes-hut/test2.txt">example</a>,
+consider the 5 bodies in the diagram below.
+In our examples, we use the convention that the branches, from left
+to right, represent the northwest, northeast, southwest, and southeast quadrants, 
+respectively.
+The tree goes through the following stages as the bodies are inserted:
+
+</p><p></p><blockquote>
+<img src="./COS 126 Programming Assignment_ Barnes-Hut Galaxy Simulator_files/bhut-insert.png" alt="Insert into the Barnes Hut tree">
+</blockquote>
+
+<p>
+The root node contains the center-of-mass and total mass of all five bodies.
+The two other internal nodes each contain the center-of-mass and total mass of
+the bodies <em>b</em>, <em>c</em>, and <em>d</em>.
+
+</p><p><b>Calculating the force acting on a body.</b>
+To calculate the net force acting on body <em>b</em>,
+use the following recursive procedure, starting with the root of the quad-tree:
+</p><ol>
+<li>
+If the current node is an external node (and it is not body <em>b</em>),
+calculate the force exerted by the current node on <em>b</em>,
+and add this amount to <em>b</em>'s net force.
+
+</li><li>
+Otherwise, calculate the ratio <em>s / d</em>. If <em>s / d</em> &lt; θ,
+treat this internal node as a single body, and calculate the force it
+exerts on body <em>b</em>, and add this amount to <em>b</em>'s net force.
+
+</li><li>
+Otherwise, run the procedure recursively on each of the current node's children.
+</li></ol>
+
+As an example, to calculate the net force acting on body <em>a</em>,
+we start at the root node, which is an internal node.
+It represents the center-of-mass of the five bodies
+<em>a</em>, <em>b</em>, <em>c</em>, <em>d</em>, and <em>e</em>, which have
+masses 1, 2, 3, 4, and 5 kg, respectively.
+The force calculation proceeds as follows:
+
+<p></p><center>
+<img src="./COS 126 Programming Assignment_ Barnes-Hut Galaxy Simulator_files/force.gif">
+</center>
+
+<ol>
+
+<li>The first node examined is the root.
+The  quotient s/d = 100/55.7 &gt; θ = 0.5, so
+we perform the process recursively on each of the root's children.
+
+</li><li>
+The first child is body <em>a</em> itself.
+A node does not exert force on itself, so we don't do anything.
+
+</li><li>
+This child represents the northeast quadrant of the space, and contains the
+center-of-mass of bodies <em>b</em>, <em>c</em>, and <em>d</em>. 
+Now <em>s/d</em> = 50/77.4 &gt; θ so we recursively 
+calculate the force exerted by the node's only child.  
+
+</li><li>
+This is also an internal node, representing the northeast quadrant of its parent,
+and containing the center-of-mass of bodies <em>b</em>, <em>c</em>, and <em>d</em>.
+Now <em>s/d</em> = 25/77.4 &lt; θ.
+Treating the internal node as a single body whose mass
+is the sum of the masses of <em>b</em>, <em>c</em>, and <em>d</em>,
+we calculate the force exerted on body <em>a</em>, and add this value to the net
+force exerted on <em>a</em>. Since the parent of this node
+has no more children, we continue examining the other children of the root.
+</li><li>
+The next child is the one containing body <em>e</em>.
+This is an external node, so we calculate the pairwise force between
+<em>a</em> and <em>e</em>, and add this to <em>a</em>'s net force.
+</li></ol>
+
+<!--
+<p>
+If &theta; had been smaller, say 0.25, then the quotient s/d would have been larger
+than &theta;.
+In that case, we would not have treated the internal node as a single body,
+and would have examined each of its 
+children.  The tree traversal would look like <a href="bruteforce.gif">this</a>.
+-->
+
+<p>
+<b>Your Assignment.</b>
+Implement the Barnes-Hut algorithm and animate the results using 
+<tt>StdDraw</tt>.
+
+</p><ul>
+
+<p></p><li><em>Brute force implementation.</em>
+In Assignment 2, you implemented a brute force solution.
+We provide an object-oriented version of that assignment that uses
+an array of <tt>Body</tt> objects.
+Because we are now interested in plotting thousands of bodies,
+we plot each one as a single pixel instead of with an image.
+Accordingly, the input format replaces the name of the picture file
+with three integers (r, g, b) that encode the RGB color.
+Otherwise the format is identical to Assignment 2.
+Download <a href="ftp://ftp.cs.princeton.edu/pub/cs126/barnes-hut/Body.java">Body.java</a>
+and <a href="ftp://ftp.cs.princeton.edu/pub/cs126/barnes-hut/NBodyBrute.java">NBodyBrute.java</a>.
+Test the code on a few of the smaller data sets.
+As you can see, the program becomes sluggish very quickly as the size of the
+input file grows. 
+
+<p></p></li><li><em>Create a data type for quadrants.</em>
+In the Barnes-Hut algorithm, given a body, you must determine in which
+subdivision of the plane it lies.
+Create a data type <tt>Quad</tt> to represent a square subdivision of
+the plane. Implement the following public interface:
+
+<ul>
+<li><code>public Quad(double xmid, double ymid, double length)</code>:
+create a new quadrant centered at (xmid, ymid) of the given side length.
+
+</li><li><code>public boolean contains(double x, double y)</code>:
+Return <tt>true</tt> if (x, y) is in the quadrant, and false otherwise.
+
+</li><li><code>public double length()</code>: Returns the length of a side
+of the quadrant.
+
+</li><li><code>public Quad NW(), NE(), SW(), and SE()</code>: These four methods
+create and return a new <code>Quad</code> representing a sub-quadrant of
+the invoking quadrant. 
+
+<p></p></li><li><tt>public String toString()</tt>: return string representation
+of the quad.
+
+<p></p></li><li><tt>public void draw()</tt>: draw the quad using <tt>StdDraw</tt>.
+
+
+</li></ul>
+
+<p></p></li><li><em>Modify the Body data type.</em>
+The <tt>Body</tt> data type now represents both individual bodies
+(external nodes of the Barnes-Hut tree)
+and groups of bodies (internal nodes).
+For an internal node, the data member <tt>mass</tt>
+represents the total mass of a group of bodies,
+<tt>rx</tt> represents the x-coordinate of the group's center of mass,
+and <tt>ry</tt> represents the y-coordinate.
+The remaining data members can be ignored. Add the following
+methods to the <tt>Body</tt> data type.
+<ul>
+<li><code>public boolean in(Quad q)</code>: Returns <tt>true</tt> if the invoking
+body is in quadrant <code>q</code> and <tt>false</tt> otherwise.
+</li><li><code>public Body plus(Body b)</code>: return a new <tt>Body</tt> that
+represents the center-of-mass of the the invoking body and <tt>b</tt>,
+using the center-of-mass formula provided above.
+</li></ul>
+
+<p></p></li><li><em>Create the Barnes-Hut tree data type.</em>
+This is the trickiest part of the assignment.
+A Barnes-Hut tree contains some data (a body and a quadrant),
+plus four references to other Barnes-Hut trees. In Java, we can define it as below.
+<blockquote><pre>public class BHTree {
+    private Body body;     // body or aggregate body stored in this node
+    private Quad quad;     // square region that the tree represents
+    private BHTree NW;     // tree representing northwest quadrant
+    private BHTree NE;     // tree representing northeast quadrant
+    private BHTree SW;     // tree representing southwest quadrant
+    private BHTree SE;     // tree representing southeast quadrant
+}
+</pre></blockquote>
+
+You must implement the following constructors and methods:
+
+<ul>
+<p></p><li><tt>public BHTree(Quad q)</tt>: create a Barnes-Hut tree with
+no bodies, representing the given quadrant.
+
+<p></p></li><li><tt>public void insert(Body b)</tt>: add the body <tt>b</tt>
+to the invoking Barnes-Hut tree.
+
+<p></p></li><li><tt>public void updateForce(Body b)</tt>: approximate the
+net force acting on body <tt>b</tt> from all the bodies in the invoking
+Barnes-Hut tree, and update <tt>b</tt>'s force accordingly.
+
+<p></p></li><li><tt>public String toString()</tt>: return string representation
+of the Barnes Hut tree.
+
+<p></p></li><li><tt>public void draw()</tt>: draw the Barnes-Hut tree using <tt>StdDraw</tt>.
+
+</li></ul>
+
+
+<p></p></li><li><em>Implement the Barnes-Hut algorithm.</em>
+Create a program <tt>NBody.java</tt>, based on <tt>NBodyBrute.java</tt>,
+that performs the Barnes-Hut algorithm.
+For each time step of the simulation
+(use <tt>dt</tt> = .1), create a new Barnes-Hut tree from scratch, and
+insert all of the bodies.
+Since the Barnes-Hut tree represents a finite region in the plane, 
+only insert those bodies that are inside the universe.
+After inserting all of the bodies, reset the net force acting 
+on each body and call <code>updateForce()</code> to recalculate it.
+Then, update the positions of the bodies and plot them.
+
+</li></ul>
+
+<!--
+<p><b>Part 2e: Analysis.</b> The final part of the assignment is to collect
+some data to confirm that a step of the simulation runs in time proportional
+to N*lg N.  Put some code in <code>Nbody.java</code> that, at the end of
+each iteration, prints the number of seconds that iteration took.  Look at
+<a href="http://www.cs.princeton.edu/introcs/10analysis/Timing.java.html">
+Timing.java</a> to see how to time sections of your code.
+-->
+
+
+
+<address><small>
+This assignment was developed by Tom Ventimiglia and Kevin Wayne.
+<br>Copyright © 2003.
+</small>
+</address>
+
+
+</body><grammarly-desktop-integration data-grammarly-shadow-root="true"></grammarly-desktop-integration></html>
