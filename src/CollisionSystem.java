@@ -1,46 +1,102 @@
+import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.StdDraw;
 import edu.princeton.cs.algs4.StdIn;
 
-import java.awt.Color;
+import java.awt.*;
 
 /**
- *  The {@code CollisionSystem} class represents a collection of particles
- *  moving in the unit box, according to the laws of elastic collision.
- *  This event-based simulation relies on a priority queue.
- *  <p>
- *  For additional documentation, 
- *  see <a href="https://algs4.cs.princeton.edu/61event">Section 6.1</a> of 
- *  <i>Algorithms, 4th Edition</i> by Robert Sedgewick and Kevin Wayne. 
+ * The {@code CollisionSystem} class represents a collection of particles
+ * moving in the unit box, according to the laws of elastic collision.
+ * This event-based simulation relies on a priority queue.
+ * <p>
+ * For additional documentation,
+ * see <a href="https://algs4.cs.princeton.edu/61event">Section 6.1</a> of
+ * <i>Algorithms, 4th Edition</i> by Robert Sedgewick and Kevin Wayne.
  *
- *  @author Robert Sedgewick
- *  @author Kevin Wayne
+ * @author Robert Sedgewick
+ * @author Kevin Wayne
  */
 public class CollisionSystem {
-    private static final double HZ = 60;    // number of redraw events per clock tick
+    private static final double HZ = 50;    // number of redraw events per clock tick
 
     private MinPQ<Event> pq;          // the priority queue
-    private double t  = 0.0;          // simulation clock time
-    private Particle[] particles;     // the array of particles
+    private double t = 0.0;          // simulation clock time
+    private final Particle[] particles;     // the array of particles
 
     /**
      * Initializes a system with the specified collection of particles.
      * The individual particles will be mutated during the simulation.
      *
-     * @param  particles the array of particles
+     * @param particles the array of particles
      */
     public CollisionSystem(Particle[] particles) {
         this.particles = particles.clone();   // defensive copy
+    }
+
+    /**
+     * Unit tests the {@code CollisionSystem} data type.
+     * Reads in the particle collision system from a standard input
+     * (or generates {@code N} random particles if a command-line integer
+     * is specified); simulates the system.
+     *
+     * @param args the command-line arguments
+     */
+
+    public static final String workingMode = "From File";
+
+    public static void main(String[] args) {
+
+        StdDraw.setCanvasSize(600, 600);
+
+        // enable double buffering
+        StdDraw.enableDoubleBuffering();
+
+        // the array of particles
+        Particle[] particles;
+
+        // create n random particles
+        if (workingMode.equals("From System.in")) {
+            int n = StdIn.readInt();
+            particles = new Particle[n];
+            for (int i = 0; i < n; i++)
+                particles[i] = new Particle();
+        }
+
+        // or read from standard input
+        else {
+            In in = new In("./src/data.in");
+            int n = in.readInt();
+            particles = new Particle[n];
+            for (int i = 0; i < n; i++) {
+                double rx = in.readDouble();
+                double ry = in.readDouble();
+                double vx = in.readDouble();
+                double vy = in.readDouble();
+                double radius = in.readDouble();
+                double mass = in.readDouble();
+                int r = in.readInt();
+                int g = in.readInt();
+                int b = in.readInt();
+                Color color = new Color(r, g, b);
+                particles[i] = new Particle(rx, ry, vx, vy, radius, mass, color);
+            }
+        }
+
+        // create collision system and simulate
+        CollisionSystem system = new CollisionSystem(particles);
+        system.simulate(10000);
     }
 
     // updates priority queue with all new events for particle a
     private void predict(Particle a, double limit) {
         if (a == null) return;
 
-        // particle-particle collisions
+        // particle-particle collisions: O(NlogN)
         for (int i = 0; i < particles.length; i++) {
             double dt = a.timeToHit(particles[i]);
-            if (t + dt <= limit)
+            if (t + dt <= limit) {
                 pq.insert(new Event(t + dt, a, particles[i]));
+            }
         }
 
         // particle-wall collisions
@@ -57,17 +113,16 @@ public class CollisionSystem {
             particles[i].draw();
         }
         StdDraw.show();
-        StdDraw.pause(20);
+        StdDraw.pause(1000 / (int)HZ);
         if (t < limit) {
-            pq.insert(new Event(t + 60.0 / HZ, null, null));
+            pq.insert(new Event(t + 1 / HZ, null, null));
         }
     }
-
 
     /**
      * Simulates the system of particles for the specified amount of time.
      *
-     * @param  limit the amount of time
+     * @param limit the amount of time
      */
     public void simulate(double limit) {
 
@@ -95,7 +150,7 @@ public class CollisionSystem {
 
             // process event
 //            System.out.println("begin event!");
-            if      (a != null && b != null) a.bounceOff(b);              // particle-particle collision
+            if (a != null && b != null) a.bounceOff(b);              // particle-particle collision
             else if (a != null && b == null) a.bounceOffVerticalWall();   // particle-wall collision
             else if (a == null && b != null) b.bounceOffHorizontalWall(); // particle-wall collision
             else if (a == null && b == null) redraw(limit);               // redraw event
@@ -105,7 +160,6 @@ public class CollisionSystem {
             predict(b, limit);
         }
     }
-
 
     /***************************************************************************
      *  An event during a particle collision simulation. Each event contains
@@ -127,12 +181,12 @@ public class CollisionSystem {
         // create a new event to occur at time t involving a and b
         public Event(double t, Particle a, Particle b) {
             this.time = t;
-            this.a    = a;
-            this.b    = b;
+            this.a = a;
+            this.b = b;
             if (a != null) countA = a.count();
-            else           countA = -1;
+            else countA = -1;
             if (b != null) countB = b.count();
-            else           countB = -1;
+            else countB = -1;
         }
 
         // compare times when two events will occur
@@ -143,64 +197,9 @@ public class CollisionSystem {
         // has any collision occurred between when event was created and now?
         public boolean isValid() {
             if (a != null && a.count() != countA) return false;
-            if (b != null && b.count() != countB) return false;
-            return true;
+            return b == null || b.count() == countB;
         }
 
-    }
-
-
-    /**
-     * Unit tests the {@code CollisionSystem} data type.
-     * Reads in the particle collision system from a standard input
-     * (or generates {@code N} random particles if a command-line integer
-     * is specified); simulates the system.
-     *
-     * @param args the command-line arguments
-     */
-    public static void main(String[] args) {
-
-        StdDraw.setCanvasSize(600, 600);
-
-        // enable double buffering
-        StdDraw.enableDoubleBuffering();
-
-        // the array of particles
-        Particle[] particles;
-
-        // create n random particles
-        if (args.length == 1) {
-            int n = Integer.parseInt(args[0]);
-            particles = new Particle[n];
-            for (int i = 0; i < n; i++)
-                particles[i] = new Particle();
-        }
-
-        // or read from standard input
-        else {
-            int n = StdIn.readInt();
-            System.out.printf("n=%d\n", n);
-            particles = new Particle[n];
-            for (int i = 0; i < n; i++) {
-                System.out.printf("i = %d\n", i);
-                double rx     = StdIn.readDouble();
-                double ry     = StdIn.readDouble();
-                double vx     = StdIn.readDouble();
-                double vy     = StdIn.readDouble();
-                double radius = StdIn.readDouble();
-                double mass   = StdIn.readDouble();
-                int r         = StdIn.readInt();
-                int g         = StdIn.readInt();
-                int b         = StdIn.readInt();
-                Color color   = new Color(r, g, b);
-                particles[i] = new Particle(rx, ry, vx, vy, radius, mass, color);
-            }
-            System.out.println("ok!");
-        }
-
-        // create collision system and simulate
-        CollisionSystem system = new CollisionSystem(particles);
-        system.simulate(10000);
     }
 
 }
