@@ -3,18 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="4b3393d0-1bf9-4a51-8155-3c71d4eab45c" name="更改" comment="上传了Brute force和Algs4">
       <changelist_data name="风风" email="12012938@mail.sustech.edu.cn" />
-      <change afterPath="$PROJECT_DIR$/.idea/uiDesigner.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/2021Fall-DSAA-Proj/CollisionSystem$Event.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/2021Fall-DSAA-Proj/CollisionSystem$Event.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/2021Fall-DSAA-Proj/CollisionSystem.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/2021Fall-DSAA-Proj/CollisionSystem.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/2021Fall-DSAA-Proj/Main.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/2021Fall-DSAA-Proj/MinPQ$HeapIterator.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/2021Fall-DSAA-Proj/MinPQ$HeapIterator.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/2021Fall-DSAA-Proj/MinPQ.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/2021Fall-DSAA-Proj/MinPQ.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/2021Fall-DSAA-Proj/Particle.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/2021Fall-DSAA-Proj/Particle.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/readme.md" beforeDir="false" afterPath="$PROJECT_DIR$/readme.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/CollisionSystem.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/CollisionSystem.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/MinPQ.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/MinPQ.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Particle.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Particle.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
