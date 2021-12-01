@@ -78,6 +78,7 @@
     </repositories>
 
     <dependencies>
+
         <dependency>
             <groupId>com.aparapi</groupId>
             <artifactId>aparapi</artifactId>

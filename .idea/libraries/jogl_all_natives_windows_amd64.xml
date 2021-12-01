@@ -1,0 +1,14 @@
+<component name="libraryTable">
+  <library name="jogl-all-natives-windows-amd64">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/src/main/resources/lib/jogl-all-natives-windows-amd64.jar!/" />
+      <root url="jar://$PROJECT_DIR$/src/main/resources/lib/jogl-all.jar!/" />
+      <root url="jar://$PROJECT_DIR$/src/main/resources/lib/gluegen-rt-natives-windows-amd64.jar!/" />
+      <root url="jar://$PROJECT_DIR$/src/main/resources/lib/gluegen-rt.jar!/" />
+      <root url="jar://$PROJECT_DIR$/src/main/resources/lib/log4j-1.2.17.jar!/" />
+      <root url="jar://$PROJECT_DIR$/src/main/resources/lib/lucene-core-8.11.0.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
