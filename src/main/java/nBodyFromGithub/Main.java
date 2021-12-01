@@ -25,8 +25,10 @@ public class Main {
     public static boolean running;
     public static Texture texture = null;
 
+    public static final int NUMBER_OF_BALLS = 20000;
+
     public static void main(String[] _args) {
-        final int bodyCount = Integer.getInteger("bodies", 8192);
+        final int bodyCount = Integer.getInteger("bodies", NUMBER_OF_BALLS);
 
         //final Main kernel = new Main(bodyCount);
         final NBodyKernel kernel = new NBodyKernel(Range.create(bodyCount));
@@ -193,7 +195,6 @@ public class Main {
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.pack();
         frame.setVisible(true);
-
         animator.start();
 
     }

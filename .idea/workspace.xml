@@ -6,7 +6,13 @@
   <component name="ChangeListManager">
     <list default="true" id="4b3393d0-1bf9-4a51-8155-3c71d4eab45c" name="更改" comment="上传了Brute force和Algs4">
       <changelist_data name="风风" email="12012938@mail.sustech.edu.cn" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/jarRepositories.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/jarRepositories.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_aparapi_aparapi_3_0_1_SNAPSHOT.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_aparapi_aparapi_3_0_1_SNAPSHOT.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CS203B-Final-Project.iml" beforeDir="false" afterPath="$PROJECT_DIR$/CS203B-Final-Project.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/nBodyFromGithub/Body.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/nBodyFromGithub/Body.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/nBodyFromGithub/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/nBodyFromGithub/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/nBodyFromGithub/Perspective.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/nBodyFromGithub/Perspective.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -56,7 +62,7 @@
     <property name="ASKED_SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../2021Fall-DSAA-Proj-Mao" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="project.structure.last.edited" value="模块" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.2" />
