@@ -8,6 +8,7 @@
         <version>8</version>
     </parent>
 
+
     <groupId>com.aparapi</groupId>
     <artifactId>aparapi-examples</artifactId>
     <version>3.0.1-SNAPSHOT</version>
